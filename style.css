@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+    color: #fff;
+  }
+  
+  .overlay {
+    background: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+  }
+  
+  header {
+    text-align: center;
+    padding: 120px 20px 80px;
+  }
+  
+  header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  header h2 {
+    font-size: 2rem;
+    margin-top: 20px;
+    color: #ffeb3b;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  section {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 50px 20px;
+    max-width: 600px;
+    margin: 0 auto 100px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    box-sizing: border-box;
+  }
+  
+  section h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+  
+  form label {
+    display: block;
+    margin: 20px 0 5px;
+    font-weight: bold;
+  }
+  
+  form input,
+  form textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    background: #ffeb3b;
+    color: #000;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  button:hover {
+    background: #fcd303;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+  
