@@ -1,44 +1,371 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Get cash for your property fast. Sell your house in any condition." />
-  <meta name="keywords" content="sell my house fast, cash for homes, we buy houses, distressed property buyers" />
-  <title>Get Cash For Your Property</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
+  <title>Sell Your House Fast in Memphis, TN | Cash Offer in 24 Hours</title>
+  <meta name="description" content="Get a fair cash offer for your Memphis, TN house within 24 hours. Sell as-is—no repairs, no agent fees, flexible closing. Submit your address to get started." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Canonical (update once you have your domain) -->
+  <link rel="canonical" href="https://example.com/memphis-cash-offer" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Sell Your House Fast in Memphis, TN | Cash Offer in 24 Hours" />
+  <meta property="og:description" content="Submit your Memphis property address and get a fair cash offer within 24 hours. As-is. No fees. Flexible closing." />
+  <meta property="og:url" content="https://example.com/memphis-cash-offer" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Sell Your House Fast in Memphis, TN | Cash Offer in 24 Hours" />
+  <meta name="twitter:description" content="Submit your Memphis property address and get a fair cash offer within 24 hours. As-is. No fees. Flexible closing." />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- LocalBusiness Schema (update phone + url when ready) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"LocalBusiness",
+    "name":"MEL3 Home Solutions",
+    "description":"Local Memphis home buyer providing fair cash offers within 24 hours. Sell as-is with flexible closing.",
+    "areaServed":{
+      "@type":"City",
+      "name":"Memphis",
+      "address":{
+        "@type":"PostalAddress",
+        "addressLocality":"Memphis",
+        "addressRegion":"TN",
+        "addressCountry":"US"
+      }
+    },
+    "telephone":"+19013075197",
+    "address":{
+      "@type":"PostalAddress",
+      "addressLocality":"Memphis",
+      "addressRegion":"TN",
+      "addressCountry":"US"
+    },
+    "url":"https://example.com/memphis-cash-offer"
+  }
+  </script>
 </head>
+
 <body>
-  <div class="overlay">
-    <header>
-      <h1>GET CASH FOR YOUR PROPERTY</h1>
-      <h2>(901) 307-5197</h2>
-    </header>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <section id="lead-form">
-      <h3>Get Your Fast Cash Offer</h3>
-      <form id="leadForm">
-        <label for="address">Property Address</label>
-        <input type="text" id="address" name="address" required />
+  <!-- Sticky header -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-text">
+          <div class="brand-name">MEL3 Home Solutions</div>
+          <div class="brand-tag">Cash offers • As-is • Fast close</div>
+        </div>
+      </div>
 
-        <label for="name">Your Name</label>
-        <input type="text" id="name" name="name" required />
+      <a class="cta-call" href="tel:+19013075197" aria-label="Call or text (901) 307-5197">
+        Call/Text: (901) 307-5197
+      </a>
+    </div>
+  </header>
 
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" required />
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>Get a Cash Offer for Your House Within 24 Hours</h1>
+          <p class="subhead">
+            Submit your address. I’ll review the property and send a fair, no-obligation offer—often sooner than 24 hours.
+          </p>
 
-        <label for="notes">Notes About the Property</label>
-        <textarea id="notes" name="notes" rows="4"></textarea>
+          <ul class="bullets" role="list">
+            <li><strong>Sell as-is</strong> — no repairs, no cleaning.</li>
+            <li><strong>No agent fees</strong> — no commissions.</li>
+            <li><strong>Choose your close date</strong> — days or weeks.</li>
+          </ul>
 
-        <button type="submit">Get My Cash Offer</button>
-      </form>
+          <!-- Step 1 -->
+          <div class="card step1" aria-labelledby="step1-title">
+            <div class="card-head">
+              <h2 id="step1-title">Start with your property address</h2>
+              <p class="muted">Takes ~30 seconds. Your info stays private.</p>
+            </div>
+
+            <form id="addressForm" class="form" novalidate>
+              <label class="field">
+                <span class="label">Property Address</span>
+                <input
+                  id="addressInput"
+                  name="propertyAddress"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="street-address"
+                  placeholder="123 Main St, City, State"
+                  required
+                />
+              </label>
+
+              <button class="btn primary" type="submit">
+                Get My Offer
+              </button>
+
+              <p class="microtrust">No spam. No pressure. No obligation.</p>
+              <p id="addressError" class="error" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div class="fineprint">
+            <span class="dot" aria-hidden="true"></span>
+            Most offers sent in under <strong>18 hours</strong> (varies by info & access).
+          </div>
+        </div>
+
+        <!-- Side card -->
+        <aside class="hero-aside" aria-label="Quick overview">
+          <div class="aside-card">
+            <h3>What happens next?</h3>
+            <ol class="steps">
+              <li><span>1</span> You submit the address</li>
+              <li><span>2</span> I review comps + condition</li>
+              <li><span>3</span> You get your offer (text/call/email)</li>
+            </ol>
+
+            <div class="divider"></div>
+
+            <p class="muted">
+              If a cash offer isn’t the best move for your situation, I’ll tell you.
+            </p>
+          </div>
+        </aside>
+      </div>
     </section>
 
-    <footer>
-      © 2025 Fast Home Buyers • We Buy Houses In Any Condition
-    </footer>
-  </div>
+    <!-- How it works -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Simple process. Clear next steps.</h2>
+          <p class="muted">No games. No bait-and-switch.</p>
+        </div>
 
-  <script src="script.js"></script>
+        <div class="grid3">
+          <div class="card">
+            <h3>Submit the address</h3>
+            <p>Start with just the property address. We’ll ask for contact details next.</p>
+          </div>
+          <div class="card">
+            <h3>Quick property review</h3>
+            <p>I check recent nearby sales and estimate repairs conservatively.</p>
+          </div>
+          <div class="card">
+            <h3>Receive your offer</h3>
+            <p>You decide if it makes sense. No obligation—ever.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparency -->
+    <section class="section subtle">
+      <div class="container split">
+        <div>
+          <h2>No bait-and-switch. Here’s how the offer is priced.</h2>
+          <p class="muted">
+            Your offer is based on real market data and a clear repair estimate—so it’s explainable, not random.
+          </p>
+
+          <ul class="checklist" role="list">
+            <li>Nearby sold homes (comps)</li>
+            <li>Visible condition + repair estimate</li>
+            <li>Local demand and timeline</li>
+          </ul>
+
+          <p class="note">
+            If listing with an agent (or another route) is better for you, I’ll say so.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Your information stays private</h3>
+          <p class="muted">
+            We do not sell your information. You can ask questions first—no pressure.
+          </p>
+          <div class="divider"></div>
+          <p class="muted small">
+            Tip: including any major repairs (roof, HVAC, foundation) helps me price more accurately.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Cash offer vs. listing with an agent</h2>
+          <p class="muted">Choose what fits your timeline and goals.</p>
+        </div>
+
+        <div class="compare">
+          <div class="compare-col">
+            <h3>Cash Offer</h3>
+            <ul role="list">
+              <li>As-is (no repairs)</li>
+              <li>No showings</li>
+              <li>No commissions</li>
+              <li>Flexible closing date</li>
+              <li>Fast, certain timeline</li>
+            </ul>
+          </div>
+
+          <div class="compare-col">
+            <h3>List With Agent</h3>
+            <ul role="list">
+              <li>Prep + repairs likely</li>
+              <li>Showings + open houses</li>
+              <li>Fees/commissions</li>
+              <li>Timeline depends on buyers</li>
+              <li>Appraisal/financing risk</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2 form -->
+    <section class="section" id="formSection">
+      <div class="container">
+        <div class="section-head">
+          <h2>Where should I send your offer?</h2>
+          <p class="muted">Tell me how to reach you. Address will be included automatically.</p>
+        </div>
+
+        <div class="card">
+          <form id="leadForm" class="form two-col" novalidate>
+            <!-- Honeypot -->
+            <div class="hp-wrap" aria-hidden="true">
+              <label>Leave this blank
+                <input type="text" name="companyWebsite" tabindex="-1" autocomplete="off" />
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="label">Full Name</span>
+              <input name="fullName" type="text" autocomplete="name" required />
+            </label>
+
+            <label class="field">
+              <span class="label">Phone Number</span>
+              <input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(901) 555-1234" required />
+            </label>
+
+            <label class="field">
+              <span class="label">Email (optional)</span>
+              <input name="email" type="email" autocomplete="email" placeholder="you@email.com" />
+            </label>
+
+            <label class="field">
+              <span class="label">Property Address</span>
+              <input id="addressPrefill" name="propertyAddress" type="text" autocomplete="street-address" required />
+            </label>
+
+            <label class="field">
+              <span class="label">Property Condition (optional)</span>
+              <select name="condition">
+                <option value="">Select</option>
+                <option>Move-in ready</option>
+                <option>Minor repairs</option>
+                <option>Major repairs</option>
+                <option>Not sure</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="label">Preferred Contact</span>
+              <select name="preferredContact" required>
+                <option value="">Select</option>
+                <option>Text</option>
+                <option>Call</option>
+                <option>Email</option>
+              </select>
+            </label>
+
+            <label class="field full">
+              <span class="label">Anything I should know? (optional)</span>
+              <textarea name="notes" rows="4" placeholder="Example: tenant-occupied, roof leak, behind on payments, timeline, etc."></textarea>
+            </label>
+
+            <button class="btn primary full" type="submit" id="submitBtn">
+              Send My Info
+            </button>
+
+            <p id="formError" class="error full" aria-live="polite"></p>
+            <div id="successBox" class="success full" hidden></div>
+
+            <p class="microtrust full">
+              By submitting, you agree to be contacted about your request. No spam. No selling your info.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section subtle">
+      <div class="container">
+        <div class="section-head">
+          <h2>FAQ</h2>
+          <p class="muted">Straight answers to common questions.</p>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>Do you buy houses as-is?</summary>
+            <p>Yes. You don’t need to repair, clean, or stage the home.</p>
+          </details>
+          <details>
+            <summary>Are there any fees or commissions?</summary>
+            <p>No agent commissions. If we move forward, we’ll clearly outline any standard closing costs before you decide.</p>
+          </details>
+          <details>
+            <summary>How do you decide the offer?</summary>
+            <p>Recent nearby sold homes (comps), condition, and a conservative repair estimate. I can explain it line by line.</p>
+          </details>
+          <details>
+            <summary>How fast can you close?</summary>
+            <p>Often in days, depending on title and your timeline. You choose the date that works for you.</p>
+          </details>
+          <details>
+            <summary>Will you sell my information?</summary>
+            <p>No. Your information is only used to contact you about your request.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div>
+          <div class="brand-name">MEL3 Home Solutions</div>
+          <div class="muted small">Cash offers • As-is • Flexible closing</div>
+        </div>
+        <div class="footer-right">
+          <a href="tel:+19013075197">(901) 307-5197</a>
+          <span class="muted small">© <span id="year"></span></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
