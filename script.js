@@ -1,8 +1,6 @@
-// ====== CONFIG ======
-const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/YYYYYY/"; // <-- replace with your Zapier/Make webhook
-const MIN_SECONDS_ON_PAGE = 3; // basic bot friction
+const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/YYYYYY/"; // replace later
+const MIN_SECONDS_ON_PAGE = 3;
 
-// ====== ELEMENTS ======
 const addressForm = document.getElementById("addressForm");
 const addressInput = document.getElementById("addressInput");
 const addressError = document.getElementById("addressError");
@@ -17,40 +15,32 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 const pageLoadedAt = Date.now();
 
-// ====== HELPERS ======
-function sanitize(str) {
-  return String(str || "").trim();
-}
-
-function isValidPhone(phone) {
+function sanitize(v){ return String(v || "").trim(); }
+function isValidPhone(phone){
   const digits = phone.replace(/\D/g, "");
   return digits.length >= 10 && digits.length <= 15;
 }
-
-function formatByTomorrowSameTime() {
-  // User timezone: America/Chicago (CST/CDT). We'll show a simple "by tomorrow" promise without heavy TZ logic.
+function promiseTimeCT(){
+  // Simple, human promise; avoids brittle timezone code.
   const now = new Date();
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const hours = tomorrow.getHours();
-  const minutes = tomorrow.getMinutes().toString().padStart(2, "0");
+  const tmr = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const mins = String(tmr.getMinutes()).padStart(2, "0");
+  const hours = tmr.getHours();
   const ampm = hours >= 12 ? "PM" : "AM";
   const h12 = ((hours + 11) % 12) + 1;
-  return `${h12}:${minutes} ${ampm} CT`;
+  return `${h12}:${mins} ${ampm} CT`;
 }
-
-function showSuccess(message) {
-  successBox.hidden = false;
-  successBox.textContent = message;
-}
-
-function resetMessages() {
+function resetMessages(){
   addressError.textContent = "";
   formError.textContent = "";
   successBox.hidden = true;
   successBox.textContent = "";
 }
+function showSuccess(msg){
+  successBox.hidden = false;
+  successBox.textContent = msg;
+}
 
-// ====== STEP 1: Address only ======
 addressForm.addEventListener("submit", (e) => {
   e.preventDefault();
   resetMessages();
@@ -62,22 +52,19 @@ addressForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // Prefill step 2 + scroll
   addressPrefill.value = addr;
 
   document.getElementById("formSection").scrollIntoView({ behavior: "smooth", block: "start" });
   setTimeout(() => {
     const nameField = leadForm.querySelector('input[name="fullName"]');
     if (nameField) nameField.focus();
-  }, 350);
+  }, 300);
 });
 
-// ====== STEP 2: Full form submit ======
 leadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   resetMessages();
 
-  // Anti-bot: time on page
   const secondsOnPage = (Date.now() - pageLoadedAt) / 1000;
   if (secondsOnPage < MIN_SECONDS_ON_PAGE) {
     formError.textContent = "Please wait a moment and try again.";
@@ -86,12 +73,12 @@ leadForm.addEventListener("submit", async (e) => {
 
   const fd = new FormData(leadForm);
 
-  // Honeypot check
-  const hp = sanitize(fd.get("companyWebsite"));
-  if (hp) return; // silently drop
+  // Honeypot
+  if (sanitize(fd.get("companyWebsite"))) return;
 
   const payload = {
     submittedAt: new Date().toISOString(),
+    cityTarget: "Memphis, TN",
     fullName: sanitize(fd.get("fullName")),
     phone: sanitize(fd.get("phone")),
     email: sanitize(fd.get("email")),
@@ -99,10 +86,9 @@ leadForm.addEventListener("submit", async (e) => {
     condition: sanitize(fd.get("condition")),
     preferredContact: sanitize(fd.get("preferredContact")),
     notes: sanitize(fd.get("notes")),
-    source: "website"
+    source: "memphis-landing-page"
   };
 
-  // Validation
   if (payload.fullName.length < 2) {
     formError.textContent = "Please enter your full name.";
     return;
@@ -120,35 +106,31 @@ leadForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Submission
   try {
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending...";
 
-    // If you don't want submissions to fail during local dev, you can temporarily comment this out.
-    const res = await fetch(WEBHOOK_URL, {
+    // no-cors is common for Zapier catch hooks.
+    await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      mode: "no-cors" // Zapier often uses no-cors; you won't get a readable response.
+      mode: "no-cors"
     });
 
-    // Show success regardless (no-cors prevents reading status)
-    const promise = formatByTomorrowSameTime();
-    showSuccess(`Received. Thanks, ${payload.fullName.split(" ")[0] || ""}. You’ll hear from me by tomorrow at ${promise}.`);
+    const firstName = payload.fullName.split(" ")[0] || "there";
+    showSuccess(`Received. Thanks, ${firstName}. You’ll hear from me by tomorrow at ${promiseTimeCT()}.`);
 
     leadForm.reset();
-    addressPrefill.value = payload.propertyAddress; // keep address visible after reset
+    addressPrefill.value = payload.propertyAddress;
 
-    // Optional: disable form after success to prevent duplicates
-    // leadForm.querySelectorAll("input,select,textarea,button").forEach(el => el.disabled = true);
-
-  } catch (err) {
+  } catch {
     formError.textContent = "Something went wrong. Please call/text (901) 307-5197 and I’ll take it from there.";
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Send My Info";
   }
 });
+
 
   
