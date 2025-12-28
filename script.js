@@ -1,6 +1,8 @@
-const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/YYYYYY/"; // replace later
+// ====== CONFIG ======
+const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/YYYYYY/"; // replace with Zapier webhook
 const MIN_SECONDS_ON_PAGE = 3;
 
+// ====== ELEMENTS ======
 const addressForm = document.getElementById("addressForm");
 const addressInput = document.getElementById("addressInput");
 const addressError = document.getElementById("addressError");
@@ -15,32 +17,39 @@ document.getElementById("year").textContent = new Date().getFullYear();
 
 const pageLoadedAt = Date.now();
 
-function sanitize(v){ return String(v || "").trim(); }
-function isValidPhone(phone){
+// ====== HELPERS ======
+function sanitize(str) {
+  return String(str || "").trim();
+}
+
+function isValidPhone(phone) {
   const digits = phone.replace(/\D/g, "");
   return digits.length >= 10 && digits.length <= 15;
 }
-function promiseTimeCT(){
-  // Simple, human promise; avoids brittle timezone code.
+
+function formatByTomorrowSameTimeCT() {
   const now = new Date();
-  const tmr = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const mins = String(tmr.getMinutes()).padStart(2, "0");
-  const hours = tmr.getHours();
+  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const hours = tomorrow.getHours();
+  const minutes = tomorrow.getMinutes().toString().padStart(2, "0");
   const ampm = hours >= 12 ? "PM" : "AM";
   const h12 = ((hours + 11) % 12) + 1;
-  return `${h12}:${mins} ${ampm} CT`;
+  return `${h12}:${minutes} ${ampm} CT`;
 }
-function resetMessages(){
+
+function resetMessages() {
   addressError.textContent = "";
   formError.textContent = "";
   successBox.hidden = true;
   successBox.textContent = "";
 }
-function showSuccess(msg){
+
+function showSuccess(message) {
   successBox.hidden = false;
-  successBox.textContent = msg;
+  successBox.textContent = message;
 }
 
+// ====== STEP 1 ======
 addressForm.addEventListener("submit", (e) => {
   e.preventDefault();
   resetMessages();
@@ -55,12 +64,14 @@ addressForm.addEventListener("submit", (e) => {
   addressPrefill.value = addr;
 
   document.getElementById("formSection").scrollIntoView({ behavior: "smooth", block: "start" });
+
   setTimeout(() => {
     const nameField = leadForm.querySelector('input[name="fullName"]');
     if (nameField) nameField.focus();
-  }, 300);
+  }, 350);
 });
 
+// ====== STEP 2 ======
 leadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   resetMessages();
@@ -74,11 +85,11 @@ leadForm.addEventListener("submit", async (e) => {
   const fd = new FormData(leadForm);
 
   // Honeypot
-  if (sanitize(fd.get("companyWebsite"))) return;
+  const hp = sanitize(fd.get("companyWebsite"));
+  if (hp) return;
 
   const payload = {
     submittedAt: new Date().toISOString(),
-    cityTarget: "Memphis, TN",
     fullName: sanitize(fd.get("fullName")),
     phone: sanitize(fd.get("phone")),
     email: sanitize(fd.get("email")),
@@ -86,9 +97,11 @@ leadForm.addEventListener("submit", async (e) => {
     condition: sanitize(fd.get("condition")),
     preferredContact: sanitize(fd.get("preferredContact")),
     notes: sanitize(fd.get("notes")),
-    source: "memphis-landing-page"
+    cityTarget: "Memphis, TN",
+    source: "website"
   };
 
+  // Validate
   if (payload.fullName.length < 2) {
     formError.textContent = "Please enter your full name.";
     return;
@@ -106,11 +119,12 @@ leadForm.addEventListener("submit", async (e) => {
     return;
   }
 
+  // Submit
   try {
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending...";
 
-    // no-cors is common for Zapier catch hooks.
+    // Zapier Webhooks often require no-cors from static sites
     await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -118,11 +132,14 @@ leadForm.addEventListener("submit", async (e) => {
       mode: "no-cors"
     });
 
+    const promise = formatByTomorrowSameTimeCT();
     const firstName = payload.fullName.split(" ")[0] || "there";
-    showSuccess(`Received. Thanks, ${firstName}. You’ll hear from me by tomorrow at ${promiseTimeCT()}.`);
+    showSuccess(`Received. Thanks, ${firstName}. You’ll hear from me by tomorrow at ${promise}.`);
 
+    // Keep address after reset
+    const keepAddress = payload.propertyAddress;
     leadForm.reset();
-    addressPrefill.value = payload.propertyAddress;
+    addressPrefill.value = keepAddress;
 
   } catch {
     formError.textContent = "Something went wrong. Please call/text (901) 307-5197 and I’ll take it from there.";
@@ -131,6 +148,7 @@ leadForm.addEventListener("submit", async (e) => {
     submitBtn.textContent = "Send My Info";
   }
 });
+
 
 
   
