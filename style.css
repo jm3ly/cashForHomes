@@ -85,9 +85,10 @@ h1{font-size: clamp(28px, 3.2vw, 44px); line-height:1.08; margin:0 0 12px}
 
 .card{
   background: linear-gradient(180deg, rgba(18,21,27,.92), rgba(15,18,23,.92));
-  border: 1px solid rgba(35,42,53,.85);
+  border: 4px solid rgba(35,42,53,.85);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  padding: 10px;
 }
 .pad{padding:18px}
 .card-head{padding:18px 18px 0}
