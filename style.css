@@ -228,7 +228,7 @@ summary{cursor:pointer; font-weight:700}
 details p{margin:10px 0 0; color: var(--muted)}
 
 /* Footer */
-.footer{padding:56px 0 16px; border-top:1px solid rgba(35,42,53,.55)}
+.footer{padding:24px 0 24px; border-top:1px solid rgba(35,42,53,.55)}
 .footer-inner{display:flex; justify-content:space-between; gap:16px; align-items:center}
 .footer-right{display:flex; gap:14px; align-items:center}
 .footer a{text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.25)}
