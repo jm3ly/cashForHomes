@@ -1,5 +1,6 @@
 // ====== CONFIG ======
-const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/YYYYYY/"; // replace with Zapier webhook
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const WEB3FORMS_KEY = "259838c3-1e41-4388-92a9-fcab44556d07"; // <-- paste key here
 const MIN_SECONDS_ON_PAGE = 3;
 
 // ====== ELEMENTS ======
@@ -14,12 +15,11 @@ const successBox = document.getElementById("successBox");
 const submitBtn = document.getElementById("submitBtn");
 
 document.getElementById("year").textContent = new Date().getFullYear();
-
 const pageLoadedAt = Date.now();
 
 // ====== HELPERS ======
-function sanitize(str) {
-  return String(str || "").trim();
+function sanitize(val) {
+  return String(val || "").trim();
 }
 
 function isValidPhone(phone) {
@@ -31,7 +31,7 @@ function formatByTomorrowSameTimeCT() {
   const now = new Date();
   const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   const hours = tomorrow.getHours();
-  const minutes = tomorrow.getMinutes().toString().padStart(2, "0");
+  const minutes = String(tomorrow.getMinutes()).padStart(2, "0");
   const ampm = hours >= 12 ? "PM" : "AM";
   const h12 = ((hours + 11) % 12) + 1;
   return `${h12}:${minutes} ${ampm} CT`;
@@ -49,21 +49,24 @@ function showSuccess(message) {
   successBox.textContent = message;
 }
 
-// ====== STEP 1 ======
+// ====== STEP 1: ADDRESS ======
 addressForm.addEventListener("submit", (e) => {
   e.preventDefault();
   resetMessages();
 
   const addr = sanitize(addressInput.value);
   if (addr.length < 8) {
-    addressError.textContent = "Please enter a complete property address (street + city).";
+    addressError.textContent =
+      "Please enter a complete property address (street + city).";
     addressInput.focus();
     return;
   }
 
   addressPrefill.value = addr;
 
-  document.getElementById("formSection").scrollIntoView({ behavior: "smooth", block: "start" });
+  document
+    .getElementById("formSection")
+    .scrollIntoView({ behavior: "smooth", block: "start" });
 
   setTimeout(() => {
     const nameField = leadForm.querySelector('input[name="fullName"]');
@@ -71,10 +74,12 @@ addressForm.addEventListener("submit", (e) => {
   }, 350);
 });
 
-// ====== STEP 2 ======
+// ====== STEP 2: FULL SUBMISSION ======
 leadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   resetMessages();
+
+  if (submitBtn.disabled) return;
 
   const secondsOnPage = (Date.now() - pageLoadedAt) / 1000;
   if (secondsOnPage < MIN_SECONDS_ON_PAGE) {
@@ -85,69 +90,85 @@ leadForm.addEventListener("submit", async (e) => {
   const fd = new FormData(leadForm);
 
   // Honeypot
-  const hp = sanitize(fd.get("companyWebsite"));
-  if (hp) return;
+  if (sanitize(fd.get("companyWebsite"))) return;
 
   const payload = {
+    access_key: WEB3FORMS_KEY,
+    subject: "New Memphis Cash Offer Lead",
+    from_name: "Restored Home Solutions Website",
+
     submittedAt: new Date().toISOString(),
     fullName: sanitize(fd.get("fullName")),
     phone: sanitize(fd.get("phone")),
     email: sanitize(fd.get("email")),
     propertyAddress: sanitize(fd.get("propertyAddress")),
     condition: sanitize(fd.get("condition")),
-    preferredContact: sanitize(fd.get("preferredContact")),
+    timeline: sanitize(fd.get("timeline")),
     notes: sanitize(fd.get("notes")),
     cityTarget: "Memphis, TN",
-    source: "website"
+    source: "Website Lead Funnel"
   };
 
-  // Validate
+  // ====== VALIDATION ======
   if (payload.fullName.length < 2) {
     formError.textContent = "Please enter your full name.";
     return;
   }
+
   if (!isValidPhone(payload.phone)) {
     formError.textContent = "Please enter a valid phone number.";
     return;
   }
+
   if (payload.propertyAddress.length < 8) {
     formError.textContent = "Please enter a complete property address.";
     return;
   }
-  if (!payload.preferredContact) {
-    formError.textContent = "Please select your preferred contact method.";
+
+  if (!payload.timeline) {
+    formError.textContent = "Please select your timeline.";
     return;
   }
 
-  // Submit
-  try {
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Sending...";
+  // ====== SUBMIT ======
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sending...";
 
-    // Zapier Webhooks often require no-cors from static sites
-    await fetch(WEBHOOK_URL, {
+  try {
+    const res = await fetch(WEB3FORMS_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      mode: "no-cors"
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload)
     });
 
-    const promise = formatByTomorrowSameTimeCT();
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error("Submission failed");
+    }
+
+    const promiseTime = formatByTomorrowSameTimeCT();
     const firstName = payload.fullName.split(" ")[0] || "there";
-    showSuccess(`Received. Thanks, ${firstName}. You’ll hear from me by tomorrow at ${promise}.`);
 
-    // Keep address after reset
-    const keepAddress = payload.propertyAddress;
+    showSuccess(
+      `Thanks, ${firstName}. I’ve received your info and will personally reach out by ${promiseTime}.`
+    );
+
     leadForm.reset();
-    addressPrefill.value = keepAddress;
+    addressPrefill.value = payload.propertyAddress;
+    submitBtn.textContent = "Submitted ✓";
 
-  } catch {
-    formError.textContent = "Something went wrong. Please call/text (901) 307-5197 and I’ll take it from there.";
-  } finally {
+  } catch (err) {
     submitBtn.disabled = false;
-    submitBtn.textContent = "Send My Info";
+    submitBtn.textContent = "Get My Offer";
+    formError.textContent =
+      "Something went wrong. Please call or text (901) 307-5197 and I’ll take it from there.";
   }
 });
+
 
 
 
