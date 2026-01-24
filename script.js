@@ -1,7 +1,8 @@
 // ====== CONFIG ======
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-const WEB3FORMS_KEY = "259838c3-1e41-4388-92a9-fcab44556d07"; // <-- paste key here
+const WEB3FORMS_KEY = "259838c3-1e41-4388-92a9-fcab44556d07";
 const MIN_SECONDS_ON_PAGE = 3;
+const BUTTON_RESET_DELAY = 2500; // ms
 
 // ====== ELEMENTS ======
 const addressForm = document.getElementById("addressForm");
@@ -27,26 +28,28 @@ function isValidPhone(phone) {
   return digits.length >= 10 && digits.length <= 15;
 }
 
-function formatByTomorrowSameTimeCT() {
-  const now = new Date();
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-  const hours = tomorrow.getHours();
-  const minutes = String(tomorrow.getMinutes()).padStart(2, "0");
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const h12 = ((hours + 11) % 12) + 1;
-  return `${h12}:${minutes} ${ampm} CT`;
+function isValidEmail(email) {
+  if (!email) return true; // optional field
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function resetMessages() {
+function resetMessages(clearSuccess = true) {
   addressError.textContent = "";
   formError.textContent = "";
-  successBox.hidden = true;
-  successBox.textContent = "";
+  if (clearSuccess) {
+    successBox.hidden = true;
+    successBox.textContent = "";
+  }
 }
 
 function showSuccess(message) {
   successBox.hidden = false;
   successBox.textContent = message;
+}
+
+function focusFirstInvalidField() {
+  const firstError = leadForm.querySelector(".error, input:invalid, select:invalid, textarea:invalid");
+  if (firstError) firstError.focus();
 }
 
 // ====== STEP 1: ADDRESS ======
@@ -56,17 +59,14 @@ addressForm.addEventListener("submit", (e) => {
 
   const addr = sanitize(addressInput.value);
   if (addr.length < 8) {
-    addressError.textContent =
-      "Please enter a complete property address (street + city).";
+    addressError.textContent = "Please enter a complete property address (street + city).";
     addressInput.focus();
     return;
   }
 
   addressPrefill.value = addr;
 
-  document
-    .getElementById("formSection")
-    .scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("formSection").scrollIntoView({ behavior: "smooth", block: "start" });
 
   setTimeout(() => {
     const nameField = leadForm.querySelector('input[name="fullName"]');
@@ -77,7 +77,7 @@ addressForm.addEventListener("submit", (e) => {
 // ====== STEP 2: FULL SUBMISSION ======
 leadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  resetMessages();
+  resetMessages(false);
 
   if (submitBtn.disabled) return;
 
@@ -89,14 +89,14 @@ leadForm.addEventListener("submit", async (e) => {
 
   const fd = new FormData(leadForm);
 
-  // Honeypot
+  // Honeypot (anti-spam)
   if (sanitize(fd.get("companyWebsite"))) return;
 
   const payload = {
     access_key: WEB3FORMS_KEY,
     subject: "New Memphis Cash Offer Lead",
     from_name: "Restored Home Solutions Website",
-
+    replyto: sanitize(fd.get("email")),
     submittedAt: new Date().toISOString(),
     fullName: sanitize(fd.get("fullName")),
     phone: sanitize(fd.get("phone")),
@@ -112,27 +112,38 @@ leadForm.addEventListener("submit", async (e) => {
   // ====== VALIDATION ======
   if (payload.fullName.length < 2) {
     formError.textContent = "Please enter your full name.";
+    focusFirstInvalidField();
     return;
   }
 
   if (!isValidPhone(payload.phone)) {
     formError.textContent = "Please enter a valid phone number.";
+    focusFirstInvalidField();
     return;
   }
 
   if (payload.propertyAddress.length < 8) {
     formError.textContent = "Please enter a complete property address.";
+    focusFirstInvalidField();
     return;
   }
 
   if (!payload.timeline) {
     formError.textContent = "Please select your timeline.";
+    focusFirstInvalidField();
+    return;
+  }
+
+  if (!isValidEmail(payload.email)) {
+    formError.textContent = "Please enter a valid email address.";
+    focusFirstInvalidField();
     return;
   }
 
   // ====== SUBMIT ======
   submitBtn.disabled = true;
-  submitBtn.textContent = "Sending...";
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = "Sending... ⏳";
 
   try {
     const res = await fetch(WEB3FORMS_ENDPOINT, {
@@ -150,22 +161,24 @@ leadForm.addEventListener("submit", async (e) => {
       throw new Error("Submission failed");
     }
 
-    const promiseTime = formatByTomorrowSameTimeCT();
     const firstName = payload.fullName.split(" ")[0] || "there";
-
-    showSuccess(
-      `Thanks, ${firstName}. I’ve received your info and will personally reach out to you within 24–48 hours to talk through your options.`
-    );
+    showSuccess(`Thanks, ${firstName}. I’ve received your info and will personally reach out to you within 24–48 hours to talk through your options.`);
 
     leadForm.reset();
     addressPrefill.value = payload.propertyAddress;
     submitBtn.textContent = "Submitted ✓";
 
+    // Reset button after a short delay
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }, BUTTON_RESET_DELAY);
+
   } catch (err) {
     submitBtn.disabled = false;
-    submitBtn.textContent = "Get My Offer";
-    formError.textContent =
-      "Something went wrong. Please call or text (901) 307-5197 and I’ll take it from there.";
+    submitBtn.textContent = originalText;
+    formError.textContent = "Something went wrong. Please call or text (901) 307-5197 and I’ll take it from there.";
+    console.error("Form submission error:", err);
   }
 });
 
