@@ -154,7 +154,7 @@ leadForm.addEventListener("submit", async (e) => {
     const firstName = payload.fullName.split(" ")[0] || "there";
 
     showSuccess(
-      `Thanks, ${firstName}. I’ve received your info and will personally reach out by ${promiseTime}.`
+      `Thanks, ${firstName}. I’ve received your info and will personally reach out to you within 24–48 hours to talk through your options.`
     );
 
     leadForm.reset();
